@@ -12,8 +12,8 @@ import org.apache.commons.lang3.StringUtils;
 @Getter
 public enum SettModeEnum {
 
-    SETT_AUTO("auto", "0", "自动结算"),
-    SETT_MANUAL("manual", "1", "手工结算"),
+    SETT_AUTO("auto", "0", "自动结算/通道自动结算"),
+    SETT_MANUAL("manual", "1", "手工结算/客户自主结算"),
     ;
 
     private String code;

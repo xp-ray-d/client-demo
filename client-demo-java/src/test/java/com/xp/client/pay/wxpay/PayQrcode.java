@@ -20,7 +20,7 @@ public class PayQrcode {
 
         final JSONObject bsnInfo = new JSONObject();
         bsnInfo.putIfAbsent("subject", "付款码支付(被扫)测试");
-        bsnInfo.putIfAbsent("expire", DateTimeUtil.format(DateUtils.addHours(new Date(), 1), DatePattern.PURE_DATETIME_PATTERN));//订单付款超时时间
+        bsnInfo.putIfAbsent("expire", DateTimeUtil.format(DateUtils.addHours(new Date(), 1), DatePattern.PURE_DATETIME_PATTERN));
 
         final JSONObject scene = new JSONObject();
         scene.putIfAbsent("type", "IOS"); // 场景类型

@@ -20,7 +20,7 @@ public class PayNative {
 
         final JSONObject bsnInfo = new JSONObject();
         bsnInfo.putIfAbsent("subject", "微信扫码支付-主扫测试");
-        bsnInfo.putIfAbsent("expire", DateTimeUtil.format(DateUtils.addHours(new Date(), 1), DatePattern.PURE_DATETIME_PATTERN));//订单付款超时时间
+        bsnInfo.putIfAbsent("expire", DateTimeUtil.format(DateUtils.addHours(new Date(), 1), DatePattern.PURE_DATETIME_PATTERN));
 
         // 私有参数体
         final JSONObject msgPrivate = new JSONObject();

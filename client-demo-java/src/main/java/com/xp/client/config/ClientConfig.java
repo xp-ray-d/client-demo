@@ -32,7 +32,7 @@ public class ClientConfig implements Serializable {
     }
 
     public static ClientConfig getTest() {
-        final String baseUrl = "http://120.78.159.245:48847/forward/pay";
+        final String baseUrl = "http://test-open-cap.kuaijie-pay.com:48847/forward/pay";
         final ClientConfig clientConfig = new ClientConfig(baseUrl, CUS_CODE, CUS_PRIVATE, PLAT_PUBLIC);
         return clientConfig;
     }

@@ -17,9 +17,10 @@ public class PayQuery {
 
     public static void main(String[] args) throws Exception {
 
-        final JSONObject msgPrivate = new JSONObject(); //私有参数体
-        msgPrivate.putIfAbsent("origTxnDate", "20221025");
-        msgPrivate.putIfAbsent("origSysTraceNo", "20221025782238042493583360"); // 不可与origCusTraceNo同时为空
+        // 私有参数体
+        final JSONObject msgPrivate = new JSONObject();
+        msgPrivate.putIfAbsent("origTxnDate", "20221219");
+        msgPrivate.putIfAbsent("origSysTraceNo", "20221219802172478040412160"); // 不可与origCusTraceNo同时为空
 
         // 组装请求报文
         final ClientConfig clientConfig = ClientConfig.getDefault();

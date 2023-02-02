@@ -1,15 +1,11 @@
 package com.xp.client.pay.alipay;
 
-import cn.hutool.core.date.DatePattern;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.xp.client.config.ClientConfig;
 import com.xp.client.dto.v2.ApiReqExt;
 import com.xp.client.dto.v2.ApiRsp;
 import com.xp.client.service.BaseApiInvokeService;
-import com.xp.client.utils.DateTimeUtil;
-import java.util.Date;
-import org.apache.commons.lang3.time.DateUtils;
 
 /**
  * @author: gzb
@@ -23,15 +19,21 @@ public class PayWap {
 
         final JSONObject bsnInfo = new JSONObject();
         bsnInfo.putIfAbsent("subject", "测试支付");
-        bsnInfo.putIfAbsent("expire", DateTimeUtil.format(DateUtils.addHours(new Date(), 1), DatePattern.PURE_DATETIME_PATTERN));
+        //bsnInfo.putIfAbsent("expire", DateTimeUtil.format(DateUtils.addHours(new Date(), 1), DatePattern.PURE_DATETIME_PATTERN));
+
+        final JSONObject scene = new JSONObject();
+        scene.putIfAbsent("ip", "180.89.106.144");
+        scene.putIfAbsent("type", "Wap");
 
         // 私有参数体
         final JSONObject msgPrivate = new JSONObject();
-        msgPrivate.putIfAbsent("txnAmt", "1"); // 金额(分)
+        msgPrivate.putIfAbsent("txnAmt", 1); // 金额(分)
+        msgPrivate.putIfAbsent("currency", "CNY");
+        msgPrivate.putIfAbsent("bsnInfo", bsnInfo);
+        msgPrivate.putIfAbsent("scene", scene);
         msgPrivate.putIfAbsent("txnRemark", "订单附言");
         msgPrivate.putIfAbsent("memo", "回传信息");
         msgPrivate.putIfAbsent("notifyUrl", "http://127.0.0.1:8078/txn/v2/simulator/pay/notify");
-        msgPrivate.putIfAbsent("bsnInfo", bsnInfo);
 
         // msgPrivate.putIfAbsent(ApiMsgFieldEnum.SETT.getCode(), SettModeEnum.SETT_AUTO.getValue());
         // msgPrivate.putIfAbsent(ApiMsgFieldEnum.SPLIT.getCode(), SplitModeEnum.SPLIT_ONCE.getValue());

@@ -20,7 +20,7 @@ public class PayMiniApp {
 
         final JSONObject bsnInfo = new JSONObject();
         bsnInfo.putIfAbsent("subject", "微信扫码支付-小程序支付测试");
-        bsnInfo.putIfAbsent("expire", DateTimeUtil.format(DateUtils.addHours(new Date(), 1), DatePattern.PURE_DATETIME_PATTERN));//订单付款超时时间
+        bsnInfo.putIfAbsent("expire", DateTimeUtil.format(DateUtils.addHours(new Date(), 1), DatePattern.PURE_DATETIME_PATTERN));
 
         final JSONObject payer = new JSONObject();
         payer.putIfAbsent("sn", "oe1hU6qT9ykEYF_5WItCoXVOc80w"); // openid
