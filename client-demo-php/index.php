@@ -155,7 +155,7 @@
         $output = curl_exec($curl);
         if ($output) {
             curl_close($curl);
-            $output = str_replace("\\\\\\", "\\", $output);//处理多斜杠bug
+            $output = str_replace("\\\\\\", "\\", $output);//处理字符串中的多层反斜杠
             return json_decode($output, true);
         } else {
             $error = 'Curl error: ' . curl_error($curl);
