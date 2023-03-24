@@ -7,6 +7,7 @@ import com.xp.client.enums.*;
 import com.xp.client.utils.BaseException;
 import com.xp.client.utils.SymmetricEncryptUtil;
 import com.xp.client.utils.SymmetricKeyUtil;
+import com.xp.client.utils.XpEncodeUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -65,22 +66,28 @@ public class MsgProtectedExt {
             keystore = genDefaultKeystore();
         }
         if (StringUtils.isBlank(secretKey.getEncryptKeyPlain())) {
-            secretKey.setEncryptKeyPlain(StringUtils.isBlank(keystore.getKeyValue()) ? SymmetricKeyUtil.getSymmetricKey(keystore.getKeyAlgorithmEncrypt()) : keystore.getKeyValue());
+            secretKey.setEncryptKeyPlain(
+                    StringUtils.isBlank(keystore.getKeyValue()) ? SymmetricKeyUtil.getSymmetricKey(keystore.getKeyAlgorithmEncrypt())
+                            : keystore.getKeyValue());
         }
         if (StringUtils.isBlank(secretKey.getEncryptIVPlain())) {
-            secretKey.setEncryptIVPlain(StringUtils.isBlank(keystore.getKeyIv()) ? SymmetricKeyUtil.getSymmetricIv(keystore.getKeyAlgorithmEncrypt()) : keystore.getKeyIv());
+            secretKey.setEncryptIVPlain(StringUtils.isBlank(keystore.getKeyIv()) ? SymmetricKeyUtil.getSymmetricIv(keystore.getKeyAlgorithmEncrypt())
+                                                : keystore.getKeyIv());
         }
 
         try {
             final String cipher = SymmetricEncryptUtil.encrypt(
-                plain,
-                StringUtils.isBlank(keystore.getCharset()) ? StandardCharsets.UTF_8 : Charset.forName(keystore.getCharset()),
-                StringUtils.isBlank(keystore.getKeyAlgorithmEncrypt()) ? EncryptAlgorithmEnum.SYM_AES : EncryptAlgorithmEnum.findEnum(keystore.getKeyAlgorithmEncrypt()),
-                StringUtils.isBlank(keystore.getKeyMode()) ? EncryptModeEnum.ECB : EncryptModeEnum.findEnum(keystore.getKeyMode()),
-                StringUtils.isBlank(keystore.getKeyPadding()) ? EncryptPaddingEnum.PKCS5Padding : EncryptPaddingEnum.findEnum(keystore.getKeyPadding()),
-                secretKey.getEncryptKeyPlain(),
-                secretKey.getEncryptIVPlain(),
-                StringUtils.isBlank(keystore.getKeyAlgorithmEncode()) ? EncodeTypeEnum.BASE64 : EncodeTypeEnum.findEnum(keystore.getKeyAlgorithmEncode()));
+                    plain,
+                    StringUtils.isBlank(keystore.getCharset()) ? StandardCharsets.UTF_8 : Charset.forName(keystore.getCharset()),
+                    StringUtils.isBlank(keystore.getKeyAlgorithmEncrypt()) ? EncryptAlgorithmEnum.SYM_AES
+                            : EncryptAlgorithmEnum.findEnum(keystore.getKeyAlgorithmEncrypt()),
+                    StringUtils.isBlank(keystore.getKeyMode()) ? EncryptModeEnum.ECB : EncryptModeEnum.findEnum(keystore.getKeyMode()),
+                    StringUtils.isBlank(keystore.getKeyPadding()) ? EncryptPaddingEnum.PKCS5Padding
+                            : EncryptPaddingEnum.findEnum(keystore.getKeyPadding()),
+                    XpEncodeUtil.encodeBase64(secretKey.getEncryptKeyPlain()),
+                    XpEncodeUtil.encodeBase64(secretKey.getEncryptIVPlain()),
+                    StringUtils.isBlank(keystore.getKeyAlgorithmEncode()) ? EncodeTypeEnum.BASE64
+                            : EncodeTypeEnum.findEnum(keystore.getKeyAlgorithmEncode()));
             this.setEncrypted(cipher);
             return cipher;
         } catch (Exception e) {
@@ -102,22 +109,31 @@ public class MsgProtectedExt {
         }
 
         try {
+            String encryptKey = StringUtils.isBlank(secretKey.getEncryptKeyPlain()) ? keystore.getKeyValue() : secretKey.getEncryptKeyPlain();
+            String encryptIV = StringUtils.isBlank(secretKey.getEncryptIVPlain()) ? keystore.getKeyIv() : secretKey.getEncryptIVPlain();
             final String plain = SymmetricEncryptUtil.decrypt(cipher,
-                StringUtils.isBlank(keystore.getKeyAlgorithmEncode()) ? EncodeTypeEnum.BASE64 : EncodeTypeEnum.findEnum(keystore.getKeyAlgorithmEncode()),
-                StringUtils.isBlank(keystore.getKeyAlgorithmEncrypt()) ? EncryptAlgorithmEnum.SYM_AES : EncryptAlgorithmEnum.findEnum(keystore.getKeyAlgorithmEncrypt()),
-                StringUtils.isBlank(keystore.getKeyMode()) ? EncryptModeEnum.ECB : EncryptModeEnum.findEnum(keystore.getKeyMode()),
-                StringUtils.isBlank(keystore.getKeyPadding()) ? EncryptPaddingEnum.PKCS5Padding : EncryptPaddingEnum.findEnum(keystore.getKeyPadding()),
-                StringUtils.isBlank(secretKey.getEncryptKeyPlain()) ? keystore.getKeyValue() : secretKey.getEncryptKeyPlain(),
-                StringUtils.isBlank(secretKey.getEncryptIVPlain()) ? keystore.getKeyIv() : secretKey.getEncryptIVPlain(),
-                StringUtils.isBlank(keystore.getCharset()) ? StandardCharsets.UTF_8 : Charset.forName(keystore.getCharset()));
+                                                              StringUtils.isBlank(keystore.getKeyAlgorithmEncode()) ? EncodeTypeEnum.BASE64
+                                                                      : EncodeTypeEnum.findEnum(keystore.getKeyAlgorithmEncode()),
+                                                              StringUtils.isBlank(keystore.getKeyAlgorithmEncrypt()) ? EncryptAlgorithmEnum.SYM_AES
+                                                                      : EncryptAlgorithmEnum.findEnum(keystore.getKeyAlgorithmEncrypt()),
+                                                              StringUtils.isBlank(keystore.getKeyMode()) ? EncryptModeEnum.ECB
+                                                                      : EncryptModeEnum.findEnum(keystore.getKeyMode()),
+                                                              StringUtils.isBlank(keystore.getKeyPadding()) ? EncryptPaddingEnum.PKCS5Padding
+                                                                      : EncryptPaddingEnum.findEnum(keystore.getKeyPadding()),
+                                                              StringUtils.isBlank(encryptKey) ? encryptKey : XpEncodeUtil.encodeBase64(encryptKey),
+                                                              StringUtils.isBlank(encryptIV) ? encryptIV : XpEncodeUtil.encodeBase64(encryptIV),
+                                                              StringUtils.isBlank(keystore.getCharset()) ? StandardCharsets.UTF_8
+                                                                      : Charset.forName(keystore.getCharset()));
             if (JSONUtil.isTypeJSONObject(plain)) {
                 this.setJsonProtected(JSONUtil.parseObj(plain));
             } else {
-                throw new BaseException(RspCodeStdEnum.ERROR_MSG_FORMAT, MessageFormat.format("[MsgProtectedExt]报文体解密后明文格式非JSON：{0}", plain));
+                throw new BaseException(RspCodeStdEnum.ERROR_MSG_FORMAT,
+                                        MessageFormat.format("[MsgProtectedExt]报文体解密后明文格式非JSON：{0}", plain));
             }
             return plain;
         } catch (Exception e) {
-            throw new BaseException(RspCodeStdEnum.ERROR_SYS, MessageFormat.format("[MsgProtectedExt][{0}]报文体解密失败：{1}", cipher, e.getMessage()));
+            throw new BaseException(RspCodeStdEnum.ERROR_SYS,
+                                    MessageFormat.format("[MsgProtectedExt][{0}]报文体解密失败：{1}", cipher, e.getMessage()));
         }
     }
 }

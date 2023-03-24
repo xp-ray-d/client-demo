@@ -29,11 +29,11 @@ public class SecurityUtil {
                 return null;
             } else {
                 throw new BaseException(RspCodeStdEnum.ERROR_SYS_CFG,
-                        MessageFormat.format("[{0}]{1}配置为空", listKeystore.get(0).getObjCode(), keyTypeEnum.getDesc()));
+                                        MessageFormat.format("[{0}]{1}配置为空", listKeystore.get(0).getObjCode(), keyTypeEnum.getDesc()));
             }
         } else if (list.size() > 1) {
             throw new BaseException(RspCodeStdEnum.ERROR_SYS_CFG,
-                    MessageFormat.format("[{0}]{1}配置数量 > 1", listKeystore.get(0).getObjCode(), keyTypeEnum.getDesc()));
+                                    MessageFormat.format("[{0}]{1}配置数量 > 1", listKeystore.get(0).getObjCode(), keyTypeEnum.getDesc()));
         }
         return list.get(0);
     }
@@ -77,16 +77,17 @@ public class SecurityUtil {
         }
         try {
             return XpSignUtil.verify(bodyJson,
-                    StringUtils.isBlank(keystore.getCharset()) ? StandardCharsets.UTF_8 : Charset.forName(keystore.getCharset()),
-                    StringUtils.isBlank(keystore.getKeyAlgorithmSign()) ? SignAlgorithmEnum.SHA256withRSA.getValue() : keystore.getKeyAlgorithmSign(),
-                    publicKey,
-                    sign);
+                                     StringUtils.isBlank(keystore.getCharset()) ? StandardCharsets.UTF_8 : Charset.forName(keystore.getCharset()),
+                                     StringUtils.isBlank(keystore.getKeyAlgorithmSign()) ? SignAlgorithmEnum.SHA256withRSA.getValue()
+                                             : keystore.getKeyAlgorithmSign(),
+                                     publicKey,
+                                     sign);
         } catch (Exception e) {
             throw new BaseException(RspCodeStdEnum.ERROR_SYS, MessageFormat.format("验签失败：{0}", e.getMessage()));
         }
     }
 
-    public static String encrypt(final String plain, final XpKeystoreDto keystore) {
+    public static String encrypt(final String plain, final XpKeystoreDto keystore, final String encryptAlgorithm) {
         if (StringUtils.isBlank(plain)) {
             log.error("待加密字符串为空");
             return "";
@@ -100,16 +101,18 @@ public class SecurityUtil {
         }
         try {
             final String cipher = AsymmetricEncryptUtil.encrypt(plain,
-                    StringUtils.isBlank(keystore.getCharset()) ? StandardCharsets.UTF_8 : Charset.forName(keystore.getCharset()),
-                    keystore.getKeyAlgorithmEncrypt(),
-                    publicKey);
+                                                                StringUtils.isBlank(keystore.getCharset()) ? StandardCharsets.UTF_8
+                                                                        : Charset.forName(keystore.getCharset()),
+                                                                StringUtils.isBlank(encryptAlgorithm) ? keystore.getKeyAlgorithmEncrypt()
+                                                                        : encryptAlgorithm,
+                                                                publicKey);
             return cipher;
         } catch (Exception e) {
             throw new BaseException(RspCodeStdEnum.ERROR_SYS, MessageFormat.format("安全密钥[0]加密失败：{1}", plain, e.getMessage()));
         }
     }
 
-    public static String decrypt(final String cipher, final XpKeystoreDto keystore) {
+    public static String decrypt(final String cipher, final XpKeystoreDto keystore, final String encryptAlgorithm) {
         if (StringUtils.isBlank(cipher)) {
             log.error("待解密字符串为空");
             return "";
@@ -123,9 +126,11 @@ public class SecurityUtil {
         }
         try {
             final String plain = AsymmetricEncryptUtil.decrypt(cipher,
-                    keystore.getKeyAlgorithmEncrypt(),
-                    privateKey,
-                    StringUtils.isBlank(keystore.getCharset()) ? StandardCharsets.UTF_8 : Charset.forName(keystore.getCharset()));
+                                                               StringUtils.isBlank(encryptAlgorithm) ? keystore.getKeyAlgorithmEncrypt()
+                                                                       : encryptAlgorithm,
+                                                               privateKey,
+                                                               StringUtils.isBlank(keystore.getCharset()) ? StandardCharsets.UTF_8
+                                                                       : Charset.forName(keystore.getCharset()));
             return plain;
         } catch (Exception e) {
             throw new BaseException(RspCodeStdEnum.ERROR_SYS, MessageFormat.format("安全密钥[0]解密失败：{1}", cipher, e.getMessage()));

@@ -6,6 +6,7 @@ import cn.hutool.crypto.asymmetric.*;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import org.apache.commons.lang3.StringUtils;
 
 public class XpRSAUtil {
 
@@ -40,6 +41,17 @@ public class XpRSAUtil {
         return Base64.encode(encrypt);
     }
 
+    public static String encryptBase64ByPublicKey(final String data, final Charset charset, final String publicKey, final String algorithm) {
+        byte[] encrypt = encryptByPublicKey(data.getBytes(charset == null ? StandardCharsets.UTF_8 : charset), publicKey, algorithm);
+        return Base64.encode(encrypt);
+    }
+
+    public static byte[] encryptByPublicKey(final byte[] data, final String publicKey, final String algorithm) {
+        String algo = StringUtils.isBlank(algorithm) ? AsymmetricAlgorithm.RSA.getValue() : algorithm;
+        RSA rsa = new RSA(algo, (String)null, publicKey);
+        return rsa.encrypt(data, KeyType.PublicKey);
+    }
+
     public static byte[] encryptByPublicKey(final byte[] data, final String publicKey) {
         RSA algorithm = new RSA(AsymmetricAlgorithm.RSA.getValue(), (String)null, publicKey);
         return algorithm.encrypt(data, KeyType.PublicKey);
@@ -49,6 +61,18 @@ public class XpRSAUtil {
         byte[] dataDecoded = Base64.decode(data);
         byte[] decrypt = decryptByPrivateKey(dataDecoded, privateKey);
         return new String(decrypt, charset == null ? StandardCharsets.UTF_8 : charset);
+    }
+
+    public static String decryptBase64ByPrivateKey(final String data, final Charset charset, final String privateKey, final String algorithm) {
+        byte[] dataDecoded = Base64.decode(data);
+        byte[] decrypt = decryptByPrivateKey(dataDecoded, privateKey, algorithm);
+        return new String(decrypt, charset == null ? StandardCharsets.UTF_8 : charset);
+    }
+
+    public static byte[] decryptByPrivateKey(final byte[] data, final String privateKey, final String algorithm) {
+        String algo = StringUtils.isBlank(algorithm) ? AsymmetricAlgorithm.RSA.getValue() : algorithm;
+        RSA rsa = new RSA(algo, privateKey, (String)null);
+        return rsa.decrypt(data, KeyType.PrivateKey);
     }
 
     public static byte[] decryptByPrivateKey(final byte[] data, final String privateKey) {

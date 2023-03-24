@@ -1,5 +1,6 @@
 package com.xp.client.dto.v2.body;
 
+import cn.hutool.crypto.asymmetric.AsymmetricAlgorithm;
 import com.xp.client.dto.XpKeystoreDto;
 import com.xp.client.utils.SecurityUtil;
 import lombok.AllArgsConstructor;
@@ -38,15 +39,15 @@ public class SecretKeyExt extends SecretKey {
     }
 
     public void encrypt(final XpKeystoreDto keystore) {
-        final String keyCipher = SecurityUtil.encrypt(this.getEncryptKeyPlain(), keystore);
-        final String ivCipher = SecurityUtil.encrypt(this.getEncryptIVPlain(), keystore);
+        final String keyCipher = SecurityUtil.encrypt(this.getEncryptKeyPlain(), keystore, AsymmetricAlgorithm.RSA_ECB_PKCS1.getValue());
+        final String ivCipher = SecurityUtil.encrypt(this.getEncryptIVPlain(), keystore, AsymmetricAlgorithm.RSA_ECB_PKCS1.getValue());
         this.setEncryptKey(keyCipher);
         this.setEncryptIV(ivCipher);
     }
 
     public void decrypt(final XpKeystoreDto keystore) {
-        final String keyPlain = SecurityUtil.decrypt(this.getEncryptKey(), keystore);
-        final String ivPlain = SecurityUtil.decrypt(this.getEncryptIV(), keystore);
+        final String keyPlain = SecurityUtil.decrypt(this.getEncryptKey(), keystore, AsymmetricAlgorithm.RSA_ECB_PKCS1.getValue());
+        final String ivPlain = SecurityUtil.decrypt(this.getEncryptIV(), keystore, AsymmetricAlgorithm.RSA_ECB_PKCS1.getValue());
         this.setEncryptKeyPlain(keyPlain);
         this.setEncryptIVPlain(ivPlain);
     }

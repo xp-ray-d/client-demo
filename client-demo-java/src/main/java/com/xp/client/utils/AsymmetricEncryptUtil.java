@@ -15,8 +15,8 @@ public class AsymmetricEncryptUtil {
             throw new RuntimeException(String.format("[%s]加密失败：密钥为空", params));
         } else if (StringUtils.isBlank(encryptAlgorithm)) {
             throw new RuntimeException(String.format("[%s]加密失败：加密算法为空", params));
-        } else if (StringUtils.equals(encryptAlgorithm, EncryptAlgorithmEnum.ASYM_RSA.getValue())) {
-            return XpRSAUtil.encryptBase64ByPublicKey(data, charset, publicKey);
+        } else if (StringUtils.startsWith(encryptAlgorithm, EncryptAlgorithmEnum.ASYM_RSA.getValue())) {
+            return XpRSAUtil.encryptBase64ByPublicKey(data, charset, publicKey, encryptAlgorithm);
         } else if (StringUtils.equals(encryptAlgorithm, EncryptAlgorithmEnum.ASYM_SM2.getValue())) {
             return XpSM2Util.encryptBase64ByPublicKey(data, charset, publicKey);
         } else {
@@ -32,8 +32,8 @@ public class AsymmetricEncryptUtil {
             throw new RuntimeException(String.format("[%s]解密失败：密钥为空", params));
         } else if (StringUtils.isBlank(encryptAlgorithm)) {
             throw new RuntimeException(String.format("[%s]解密失败：加密算法为空", params));
-        } else if (StringUtils.equals(encryptAlgorithm, EncryptAlgorithmEnum.ASYM_RSA.getValue())) {
-            return XpRSAUtil.decryptBase64ByPrivateKey(data, charset, privateKey);
+        } else if (StringUtils.startsWith(encryptAlgorithm, EncryptAlgorithmEnum.ASYM_RSA.getValue())) {
+            return XpRSAUtil.decryptBase64ByPrivateKey(data, charset, privateKey, encryptAlgorithm);
         } else if (StringUtils.equals(encryptAlgorithm, EncryptAlgorithmEnum.ASYM_SM2.getValue())) {
             return XpSM2Util.decryptBase64ByPrivateKey(data, charset, privateKey);
         } else {

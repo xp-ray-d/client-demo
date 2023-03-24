@@ -44,6 +44,12 @@ public class BaseApiInvokeService {
 
     public static ApiReqExt buildReq(final ClientConfig client,
                                      final JSONObject jsonPrivate,
+                                     final JSONObject jsonProtected) {
+        return BaseApiInvokeService.buildReq(client, jsonPrivate, jsonProtected, new SecretKey());
+    }
+
+    public static ApiReqExt buildReq(final ClientConfig client,
+                                     final JSONObject jsonPrivate,
                                      final JSONObject jsonProtected,
                                      final SecretKey secretKey) {
         final List<XpKeystoreDto> listKeyDto = client.getListKeyDto();
