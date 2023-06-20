@@ -32,10 +32,13 @@
     $msgPrivate2["txnAmt"]             = "1";
     $msgPrivate2["memo"]               = "订单的自定义数据";
     $msgPrivate2["bsnInfo"]["subject"] = "支付标题";
-    $msgPrivate2["bsnInfo"]["expire"]  = "20221122113013";
+    //$msgPrivate2["bsnInfo"]["expire"]  = "20221122113013";
     $msgPrivate2["sett"]               = "1";
     $msgPrivate2["split"]              = "2";
     $msgPrivate2["notifyUrl"]          = "http://192.168.20.104:48079/txn/v2/simulator/alipayPayWap/notify";
+
+    $payer["sn"] = "oe1hU6qT9ykEYF_5WItCoXVOc80w";
+    $msgPrivate2["payer"] = $payer;
 
     //保护参数体
     $msgProtected["acctName"] = "张三";
@@ -46,7 +49,7 @@
     switch ($type) {
         case "pay"://扫码支付(主扫)
             $body["msgPrivate"] = $msgPrivate2;
-            $url = "https://api.kuaijie-pay.com/forward/pay/txn/v2/wxpay/pay/native";
+            $url = "https://api.kuaijie-pay.com/forward/pay/txn/v2/wxpay/pay/miniapp";
             break;
 
         case "query"://支付结果查询
@@ -55,7 +58,6 @@
             break;
         default:
             die("参数错误");
-
     }
 
     //有设置保护参数体
@@ -248,8 +250,7 @@
         $output = curl_exec($curl);
         if ($output) {
             curl_close($curl);
-            $output = str_replace("\\\\\\", "\\", $output);//处理多斜杠bug
-            return json_decode($output, true);
+            return json_decode($output, JSON_UNESCAPED_SLASHES);
         } else {
             $error = 'Curl error: ' . curl_error($curl);
             curl_close($curl);
