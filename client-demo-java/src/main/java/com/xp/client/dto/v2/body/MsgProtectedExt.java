@@ -84,8 +84,8 @@ public class MsgProtectedExt {
                     StringUtils.isBlank(keystore.getKeyMode()) ? EncryptModeEnum.ECB : EncryptModeEnum.findEnum(keystore.getKeyMode()),
                     StringUtils.isBlank(keystore.getKeyPadding()) ? EncryptPaddingEnum.PKCS5Padding
                             : EncryptPaddingEnum.findEnum(keystore.getKeyPadding()),
-                    XpEncodeUtil.encodeBase64(secretKey.getEncryptKeyPlain()),
-                    XpEncodeUtil.encodeBase64(secretKey.getEncryptIVPlain()),
+                    secretKey.getEncryptKeyPlain(),
+                    secretKey.getEncryptIVPlain(),
                     StringUtils.isBlank(keystore.getKeyAlgorithmEncode()) ? EncodeTypeEnum.BASE64
                             : EncodeTypeEnum.findEnum(keystore.getKeyAlgorithmEncode()));
             this.setEncrypted(cipher);
@@ -120,8 +120,8 @@ public class MsgProtectedExt {
                                                                       : EncryptModeEnum.findEnum(keystore.getKeyMode()),
                                                               StringUtils.isBlank(keystore.getKeyPadding()) ? EncryptPaddingEnum.PKCS5Padding
                                                                       : EncryptPaddingEnum.findEnum(keystore.getKeyPadding()),
-                                                              StringUtils.isBlank(encryptKey) ? encryptKey : XpEncodeUtil.encodeBase64(encryptKey),
-                                                              StringUtils.isBlank(encryptIV) ? encryptIV : XpEncodeUtil.encodeBase64(encryptIV),
+                                                              StringUtils.isBlank(encryptKey) ? "" : encryptKey,
+                                                              StringUtils.isBlank(encryptIV) ? "" : encryptIV,
                                                               StringUtils.isBlank(keystore.getCharset()) ? StandardCharsets.UTF_8
                                                                       : Charset.forName(keystore.getCharset()));
             if (JSONUtil.isTypeJSONObject(plain)) {
